@@ -11,7 +11,7 @@ IntelliJ IDEA
 
 ## 使用说明
 
-1. 下载代码 git clone https://github.com/pitt1997/Seckill 将项目下载到IDEA里面
+1. 下载代码 git clone https://github.com/HmhWz/miaosha.git 将项目下载到IDEA里面
 2. 运行sql文件夹下的sql文件
 3. 到src/main/resources下的application.properties下修改你的数据库链接用户名与密码
 4. 安装redis、mysql、rabbitmq、maven等环境
