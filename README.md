@@ -1,15 +1,11 @@
-## 课程学习笔记以及重点知识讲解：https://blog.csdn.net/brad_pitt7
-
-
-
 ## 基于 SpringBoot+Maven+Mybatis+Redis+RabbitMQ 高并发商城秒杀系统
 ## 开发工具 
-IntelliJ IDEA 2017.3.1 x64
+IntelliJ IDEA
 ## 开发环境				
 
 | JDK |Maven | Mysql |SpringBoot | redis |RabbitMQ|
 |--|--|--|--|--|--|
-|1.8 | 3.2.2 | 5.5 | 1.5.9.RELEASE | 3.2 |3.7.14| 
+|1.8 | 3.5.3 | 5.7 | 1.5.9.RELEASE | 4.0.9 |3.6| 
 
 
 
@@ -57,6 +53,4 @@ IntelliJ IDEA 2017.3.1 x64
 
 ![Image text](https://github.com/pitt1997/miaosha_idea/blob/master/showimgs/miaoshasuccess.png)
 
-## 更多知识
-个人博客： https://blog.csdn.net/brad_pitt7
 
