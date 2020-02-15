@@ -1,4 +1,4 @@
-## 基于 SpringBoot+Maven+Mybatis+Redis+RabbitMQ 高并发商城秒杀系统
+## 商城秒杀系统
 ## 开发工具 
 IntelliJ IDEA
 ## 开发环境				
