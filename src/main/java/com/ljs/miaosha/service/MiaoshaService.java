@@ -52,22 +52,11 @@ public class MiaoshaService {
 		}
 	}
 
-	@Transactional
-	public OrderInfo miaosha(MiaoshaUser user, GoodsVo goodsvo) {
-		//1.减少库存,即更新库存
-		goodsService.reduceStock(goodsvo);//考虑减少库存失败的时候，不进行写入订单
-		//2.下订单,其中有两个订单: order_info   miaosha_order
-		OrderInfo orderinfo = orderService.createOrder(user, goodsvo);
-		return orderinfo;
-	}
-
 	/**
 	 * 获取秒杀结果
 	 * 成功返回id
-	 * 失败返回0或-1
 	 * 0代表排队中
 	 * -1代表库存不足
-	 *
 	 * @param userId
 	 * @param goodsId
 	 * @return

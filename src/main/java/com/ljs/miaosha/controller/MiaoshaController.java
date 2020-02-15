@@ -1,9 +1,7 @@
 package com.ljs.miaosha.controller;
 
-import com.ljs.miaosha.access.AccessLimit;
 import com.ljs.miaosha.domain.MiaoshaOrder;
 import com.ljs.miaosha.domain.MiaoshaUser;
-import com.ljs.miaosha.domain.OrderInfo;
 import com.ljs.miaosha.rabbitmq.MQSender;
 import com.ljs.miaosha.rabbitmq.MiaoshaMessage;
 import com.ljs.miaosha.redis.AccessKey;
@@ -141,8 +139,7 @@ public class MiaoshaController implements InitializingBean {
 	 */
 	@RequestMapping(value = "/result", method = RequestMethod.GET)
 	@ResponseBody
-	public Result<Long> doMiaoshaResult(
-			Model model, MiaoshaUser user, @RequestParam(value = "goodsId", defaultValue = "0") long goodsId) {
+	public Result<Long> doMiaoshaResult(Model model, MiaoshaUser user, @RequestParam(value = "goodsId", defaultValue = "0") long goodsId) {
 		long result = miaoshaService.getMiaoshaResult(user.getId(), goodsId);
 		return Result.success(result);
 	}
@@ -180,7 +177,6 @@ public class MiaoshaController implements InitializingBean {
 
 //		 预减少库存，减少redis里面的库存
 		long stock = redisService.decr(GoodsKey.getMiaoshaGoodsStock, "" + goodsId);
-		//3.判断减少数量1之后的stock，区别于查数据库时候的stock<=0
 		if (stock < 0) {
 			localMap.put(goodsId, true);
 			return Result.error(CodeMsg.MIAOSHA_OVER_ERROR);
@@ -190,90 +186,13 @@ public class MiaoshaController implements InitializingBean {
 			model.addAttribute("errorMessage", CodeMsg.REPEATE_MIAOSHA);
 			return Result.error(CodeMsg.REPEATE_MIAOSHA);
 		}
-		//5.正常请求，入队，发送一个秒杀message到队列里面去，入队之后客户端应该进行轮询。
+		//发送一个秒杀message到队列里面去，入队之后客户端应该进行轮询。
 		MiaoshaMessage mms = new MiaoshaMessage();
 		mms.setUser(user);
 		mms.setGoodsId(goodsId);
 		mQSender.sendMiaoshaMessage(mms);
 		//返回0代表排队中
 		return Result.success(0);
-	}
-
-	/**
-	 * 版本 1
-	 * 1000*10
-	 * QPS 703.4822370735138
-	 *
-	 * @param model
-	 * @param user
-	 * @return
-	 */
-	@RequestMapping("/do_miaosha")
-	public String toList(Model model, MiaoshaUser user, @RequestParam("goodsId") Long goodsId) {
-		model.addAttribute("user", user);
-		//如果用户为空，则返回至登录页面
-		if (user == null) {
-			return "login";
-		}
-		GoodsVo goodsvo = goodsService.getGoodsVoByGoodsId(goodsId);
-		//判断商品库存，库存大于0，才进行操作，多线程下会出错
-		int stockcount = goodsvo.getStockCount();
-		if (stockcount <= 0) {//失败			库存至临界值1的时候，此时刚好来了加入10个线程，那么库存就会-10
-			model.addAttribute("errorMessage", CodeMsg.MIAOSHA_OVER_ERROR);
-			return "miaosha_fail";
-		}
-		//判断这个秒杀订单形成没有，判断是否已经秒杀到了，避免一个账户秒杀多个商品 
-		MiaoshaOrder order = orderService.getMiaoshaOrderByUserIdAndCoodsId(user.getId(), goodsId);
-		if (order != null) {//重复下单
-			model.addAttribute("errorMessage", CodeMsg.REPEATE_MIAOSHA);
-			return "miaosha_fail";
-		}
-		//可以秒杀，原子操作：1.库存减1，2.下订单，3.写入秒杀订单--->是一个事务
-		OrderInfo orderinfo = miaoshaService.miaosha(user, goodsvo);
-		//如果秒杀成功，直接跳转到订单详情页上去。
-		model.addAttribute("orderinfo", orderinfo);
-		model.addAttribute("goods", goodsvo);
-		return "order_detail";//返回页面login
-	}
-
-
-	/**
-	 * 版本 2
-	 * 做了页面静态化的，直接返回订单的信息
-	 *
-	 * @param model
-	 * @param user
-	 * @param goodsId
-	 * @return 不能是GET请求，GET，
-	 */
-	//POST请求 
-	@RequestMapping(value = "/do_miaosha_ajax", method = RequestMethod.POST)
-	@ResponseBody
-	public Result<OrderInfo> doMiaosha(Model model, MiaoshaUser user, @RequestParam(value = "goodsId", defaultValue = "0") long goodsId) {
-		model.addAttribute("user", user);
-		//如果用户为空，则返回至登录页面
-		if (user == null) {
-			return Result.error(CodeMsg.SESSION_ERROR);
-		}
-		GoodsVo goodsvo = goodsService.getGoodsVoByGoodsId(goodsId);
-		//判断商品库存，库存大于0，才进行操作，多线程下会出错
-		int stockcount = goodsvo.getStockCount();
-		if (stockcount <= 0) {//失败			库存至临界值1的时候，此时刚好来了加入10个线程，那么库存就会-10
-			//model.addAttribute("errorMessage", CodeMsg.MIAOSHA_OVER_ERROR);
-			return Result.error(CodeMsg.MIAOSHA_OVER_ERROR);
-		}
-		//判断这个秒杀订单形成没有，判断是否已经秒杀到了，避免一个账户秒杀多个商品 
-		MiaoshaOrder order = orderService.getMiaoshaOrderByUserIdAndCoodsId(user.getId(), goodsId);
-		if (order != null) {//重复下单
-			//model.addAttribute("errorMessage", CodeMsg.REPEATE_MIAOSHA);
-			return Result.error(CodeMsg.REPEATE_MIAOSHA);
-		}
-		//可以秒杀，原子操作：1.库存减1，2.下订单，3.写入秒杀订单--->是一个事务
-		OrderInfo orderinfo = miaoshaService.miaosha(user, goodsvo);
-		//如果秒杀成功，直接跳转到订单详情页上去。
-		model.addAttribute("orderinfo", orderinfo);
-		model.addAttribute("goods", goodsvo);
-		return Result.success(orderinfo);
 	}
 
 }

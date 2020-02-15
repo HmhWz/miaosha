@@ -55,25 +55,21 @@ public class OrderService {
 		orderInfo.setCreateDate(new Date());
 		orderInfo.setGoodsCount(1);
 		orderInfo.setGoodsId(goodsvo.getId());
-		//秒杀价格
 		orderInfo.setGoodsPrice(goodsvo.getMiaoshaPrice());
 		orderInfo.setOrderChannel(1);
-		//订单状态  ---0-新建未支付  1-已支付  2-已发货  3-已收货
+		//订单状态  ---0-未支付  1-已支付  2-已发货  3-已收货
 		orderInfo.setOrderStatus(0);
-		//用户id
 		orderInfo.setUserId(user.getId());
-		//返回orderId
+
 		long orderId = orderDao.insert(orderInfo);
 		System.out.println("-----orderId:" + orderId);
 
 		OrderInfo orderquery = orderDao.selectorderInfo(user.getId(), goodsvo.getId());
 		long orderIdquery = orderquery.getId();
-		System.out.println("-----orderIdquery:" + orderIdquery);
 
 		//2.生成miaosha_order
 		MiaoshaOrder miaoshaorder = new MiaoshaOrder();
 		miaoshaorder.setGoodsId(goodsvo.getId());
-		//将订单id传给秒杀订单里面的订单orderid
 		miaoshaorder.setOrderId(orderIdquery);
 		miaoshaorder.setUserId(user.getId());
 		orderDao.insertMiaoshaOrder(miaoshaorder);
@@ -84,7 +80,7 @@ public class OrderService {
 
 
 	/**
-	 * 代码1.0
+	 * 代码  1.0
 	 * 根据用户userId和goodsId判断是否有者条订单记录，有则返回此纪录
 	 *
 	 * @param userId
@@ -96,40 +92,7 @@ public class OrderService {
 	}
 
 
-	/**
-	 * 生成订单,事务
-	 *
-	 * @param user
-	 * @param goodsvo
-	 * @return
-	 */
-	@Transactional
-	public OrderInfo createOrder(MiaoshaUser user, GoodsVo goodsvo) {
-		//1.生成order_info
-		OrderInfo orderInfo = new OrderInfo();
-		orderInfo.setDeliveryAddrId(0L);//long类型 private Long deliveryAddrId;   L
-		orderInfo.setCreateDate(new Date());
-		orderInfo.setGoodsCount(1);
-		orderInfo.setGoodsId(goodsvo.getId());
-		//秒杀价格
-		orderInfo.setGoodsPrice(goodsvo.getMiaoshaPrice());
-		orderInfo.setOrderChannel(1);
-		//订单状态  ---0-新建未支付  1-已支付  2-已发货  3-已收货
-		orderInfo.setOrderStatus(0);
-		//用户id
-		orderInfo.setUserId(user.getId());
-		//返回orderId
-		//long orderId=
-		orderDao.insert(orderInfo);
-		//2.生成miaosha_order
-		MiaoshaOrder miaoshaorder = new MiaoshaOrder();
-		miaoshaorder.setGoodsId(goodsvo.getId());
-		//将订单id传给秒杀订单里面的订单orderid
-		miaoshaorder.setOrderId(orderInfo.getId());
-		miaoshaorder.setUserId(user.getId());
-		orderDao.insertMiaoshaOrder(miaoshaorder);
-		return orderInfo;
-	}
+
 
 
 	public OrderInfo getOrderByOrderId(long orderId) {

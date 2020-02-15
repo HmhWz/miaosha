@@ -22,7 +22,6 @@ public class MQReceiver {
 	RedisService redisService;
 	@Autowired
 	MiaoshaUserService miaoshaUserService;
-	//作为秒杀功能事务的Service
 	@Autowired
 	MiaoshaService miaoshaService;
 	@Autowired
@@ -32,26 +31,20 @@ public class MQReceiver {
 
 	@RabbitListener(queues = MQConfig.MIAOSHA_QUEUE)
 	public void receiveMiaosha(String message) {
-//		log.info("receiveMiaosha message:" + message);
-
 		MiaoshaMessage mm = RedisService.stringToBean(message, MiaoshaMessage.class);
 		MiaoshaUser user = mm.getUser();
 		long goodsId = mm.getGoodsId();
 		GoodsVo goodsvo = goodsService.getGoodsVoByGoodsId(goodsId);
 		int stockcount = goodsvo.getStockCount();
-		//1.判断库存不足
-		if (stockcount <= 0) {//失败			库存至临界值1的时候，此时刚好来了加入10个线程，那么库存就会-10
-			//model.addAttribute("errorMessage", CodeMsg.MIAOSHA_OVER_ERROR);
+		if (stockcount <= 0) {
 			return;
 		}
 		//2.判断这个秒杀订单形成没有，判断是否已经秒杀到了，避免一个账户秒杀多个商品
 		MiaoshaOrder order = orderService.getMiaoshaOrderByUserIdAndCoodsId(user.getId(), goodsId);
-		if (order != null) {// 重复下单
-			// model.addAttribute("errorMessage", CodeMsg.REPEATE_MIAOSHA);
+		if (order != null) {
 			return;
 		}
 		//原子操作：1.库存减1，2.下订单，3.写入秒杀订单--->是一个事务
-		//miaoshaService.miaosha(user,goodsvo);
 		miaoshaService.miaosha1(user, goodsvo);
 
 	}
