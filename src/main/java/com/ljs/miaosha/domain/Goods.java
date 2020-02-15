@@ -7,7 +7,6 @@ public class Goods {
 	private String goodsImg;
 	private String goodsDetail;
 	private Double goodsPrice;
-	//库存
 	private Integer goodsStock;
 
 	public Long getId() {

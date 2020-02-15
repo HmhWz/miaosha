@@ -49,7 +49,7 @@ public class MiaoshaController implements InitializingBean {
 	MQSender mQSender;
 
 	//标记
-	Map<Long, Boolean> localMap = new HashMap<Long, Boolean>();
+	HashMap<Long, Boolean> localMap = new HashMap<>();
 
 	/**
 	 * 系统初始化的时候做的事情。
@@ -171,17 +171,18 @@ public class MiaoshaController implements InitializingBean {
 		if (!check) {
 			return Result.error(CodeMsg.REQUEST_ILLEAGAL);
 		}
-//		内存标记，减少对redis的访问 localMap.put(goodsId, false);
-//		boolean over = localMap.get(goodsId);
-//		//在容量满的时候，那么就打标记为true
-//		if (over) {
-//			return Result.error(CodeMsg.MIAOSHA_OVER_ERROR);
-//		}
+//		内存标记，减少对redis的访问
+		boolean over = localMap.get(goodsId);
+		//在容量满的时候，那么就打标记为true
+		if (over) {
+			return Result.error(CodeMsg.MIAOSHA_OVER_ERROR);
+		}
 
 //		 预减少库存，减少redis里面的库存
 		long stock = redisService.decr(GoodsKey.getMiaoshaGoodsStock, "" + goodsId);
 		//3.判断减少数量1之后的stock，区别于查数据库时候的stock<=0
 		if (stock < 0) {
+			localMap.put(goodsId, true);
 			return Result.error(CodeMsg.MIAOSHA_OVER_ERROR);
 		}
 		MiaoshaOrder order = orderService.getMiaoshaOrderByUserIdAndCoodsId(user.getId(), goodsId);

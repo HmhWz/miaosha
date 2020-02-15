@@ -24,8 +24,8 @@ public class MQSender {
 	public void sendMiaoshaMessage(MiaoshaMessage mmessage) {
 		// 将对象转换为字符串
 		String msg = RedisService.beanToString(mmessage);
-		log.info("send message:" + msg);
-		// 第一个参数队列的名字，第二个参数发出的信息
+//		log.info("send message:" + msg);
+
 		amqpTemplate.convertAndSend(MQConfig.MIAOSHA_QUEUE, msg);
 	}
 
