@@ -1,13 +1,4 @@
 ## 商城秒杀系统
-## 开发工具 
-IntelliJ IDEA
-## 开发环境				
-
-| JDK |Maven | Mysql |SpringBoot | redis |RabbitMQ|
-|--|--|--|--|--|--|
-|1.8 | 3.5.3 | 5.7 | 1.5.9.RELEASE | 4.0.9 |3.6| 
-
-
 
 ## 使用说明
 

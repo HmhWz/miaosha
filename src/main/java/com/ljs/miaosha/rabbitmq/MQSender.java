@@ -29,7 +29,6 @@ public class MQSender {
 		amqpTemplate.convertAndSend(MQConfig.MIAOSHA_QUEUE, msg);
 	}
 
-
 	/**
 	 * 下面是测试。
 	 *
@@ -56,7 +55,6 @@ public class MQSender {
 
 	//广播，不需要key
 	public void sendFanout(Object message) {
-		//将对象转换为字符串
 		String msg = RedisService.beanToString(message);
 		log.info("sendFanout message:" + message);
 
@@ -67,7 +65,6 @@ public class MQSender {
 
 	// 使用header，不需要key
 	public void sendHeader(Object message) {
-		// 将对象转换为字符串
 		String msg = RedisService.beanToString(message);
 		log.info("sendHeader message:" + message);
 		MessageProperties properties = new MessageProperties();

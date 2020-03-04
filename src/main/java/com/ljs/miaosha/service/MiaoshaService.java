@@ -57,6 +57,7 @@ public class MiaoshaService {
 	 * 成功返回id
 	 * 0代表排队中
 	 * -1代表库存不足
+	 *
 	 * @param userId
 	 * @param goodsId
 	 * @return
@@ -69,9 +70,9 @@ public class MiaoshaService {
 		} else {
 			//查看商品是否卖完了
 			boolean isOver = getGoodsOver(goodsId);
-			if (isOver) {//商品卖完了
+			if (isOver) {
 				return -1;
-			} else {        //商品没有卖完
+			} else {
 				return 0;
 			}
 		}

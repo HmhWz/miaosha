@@ -19,13 +19,14 @@ import org.springframework.context.annotation.Configuration;
 public class MQConfig {
 	public static final String QUEUE = "queue";
 	public static final String MIAOSHA_QUEUE = "miaosha.queue";
-
 	public static final String TOPIC_QUEUE1 = "topic.queue1";
 	public static final String TOPIC_QUEUE2 = "topic.queue2";
 	public static final String HEADER_QUEUE = "header.queue";
+
 	public static final String TOPIC_EXCHANGE = "topic.exchange";
 	public static final String FANOUT_EXCHANGE = "fanout.exchange";
 	public static final String HEADER_EXCHANGE = "header.exchange";
+
 	public static final String ROUTINIG_KEY1 = "topic.key1";
 	public static final String ROUTINIG_KEY2 = "topic.#";
 
@@ -55,9 +56,6 @@ public class MQConfig {
 		return new Queue(TOPIC_QUEUE1, true);
 	}
 
-	/**
-	 * Topic模式 交换机：
-	 */
 	@Bean
 	public Queue topicqueue2() {
 		//名称，是否持久化
@@ -74,7 +72,6 @@ public class MQConfig {
 		//名称，
 		return new TopicExchange(TOPIC_EXCHANGE);
 	}
-
 
 	@Bean
 	public Binding topicBinding1() {
@@ -146,6 +143,8 @@ public class MQConfig {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("header1", "value1");
 		map.put("header2", "value2");
-		return BindingBuilder.bind(headerQueue1()).to(headersExchange()).whereAll(map).match();
+		return BindingBuilder.bind(headerQueue1())
+				.to(headersExchange())
+				.whereAll(map).match();
 	}
 }
