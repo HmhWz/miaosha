@@ -26,7 +26,6 @@ public class OrderService {
 	 * 判断是否秒杀到某商品，即去miaosha_order里面去查找是否有记录userId和goodsId的一条数据。
 	 */
 	public MiaoshaOrder getMiaoshaOrderByUidAndGid_Cache(Long userId, Long goodsId) {
-		//1.先去缓存里面取得
 		MiaoshaOrder morder = redisService.get(OrderKey.getMiaoshaOrderByUidAndGid, "" + userId + "_" + goodsId, MiaoshaOrder.class);
 		if (morder != null) {
 			return morder;

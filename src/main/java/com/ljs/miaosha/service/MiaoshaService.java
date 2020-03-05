@@ -48,17 +48,13 @@ public class MiaoshaService {
 
 	/**
 	 * 获取秒杀结果
-	 * 成功返回id
-	 * 0代表排队中
-	 * -1代表库存不足
+	 * 成功返回id，0代表排队中，-1代表库存不足
 	 */
 	public long getMiaoshaResult(Long userId, long goodsId) {
 		MiaoshaOrder order = orderService.getMiaoshaOrderByUidAndGid_Cache(userId, goodsId);
-		//秒杀成功
 		if (order != null) {
 			return order.getOrderId();
 		} else {
-			//查看商品是否卖完了
 			boolean isOver = getGoodsOver(goodsId);
 			if (isOver) {
 				return -1;
@@ -69,8 +65,7 @@ public class MiaoshaService {
 	}
 
 	/**
-	 * 5-22
-	 * 先写入缓存
+	 * 设置库存不足标记
 	 */
 	private void setGoodsOver(Long goodsId) {
 		redisService.set(MiaoshaKey.isGoodsOver, "" + goodsId, true);

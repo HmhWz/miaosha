@@ -39,14 +39,12 @@ public class MQReceiver {
 		if (stockcount <= 0) {
 			return;
 		}
-		//2.判断这个秒杀订单形成没有，判断是否已经秒杀到了，避免一个账户秒杀多个商品
+		// 判断这个秒杀订单形成没有，判断是否已经秒杀到了，避免一个账户秒杀多个商品
 		MiaoshaOrder order = orderService.getMiaoshaOrderByUidAndGid(user.getId(), goodsId);
 		if (order != null) {
 			return;
 		}
-		//原子操作：1.库存减1，2.下订单，3.写入秒杀订单--->是一个事务
 		miaoshaService.miaosha1(user, goodsvo);
-
 	}
 
 }

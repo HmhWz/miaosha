@@ -145,13 +145,11 @@ public class MiaoshaController implements InitializingBean {
 
 	/**
 	 * 563.1899076368552
-	 * 做缓存+消息队列
 	 * 1.系统初始化，把商品库存数量加载到Redis上面来。
 	 * 2.收到请求，Redis预减库存。
 	 * 3.请求入队，立即返回排队中。
 	 * 4.请求出队，生成订单，减少库存（事务）。
 	 * 5.客户端轮询，是否秒杀成功。
-	 * 不能是GET请求，GET
 	 */
 	@RequestMapping(value = "/{path}/do_miaosha_ajaxcache", method = RequestMethod.POST)
 	@ResponseBody
