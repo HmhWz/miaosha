@@ -33,6 +33,7 @@ public class LoginController {
 	@RequestMapping("/to_login")
 	public String toLogin() {
 		return "login";//返回页面login
+
 	}
 
 	//使用JSR303校验

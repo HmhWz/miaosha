@@ -6,10 +6,10 @@
 
 	<groupId>com.ljs</groupId>
 	<artifactId>miaosha_idea</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 
 	<name>miaosha_idea</name>
-	<url>http://maven.apache.org</url>
+<!--	<url>http://maven.apache.org</url>-->
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>

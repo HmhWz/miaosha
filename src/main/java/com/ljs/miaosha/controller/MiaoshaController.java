@@ -47,7 +47,7 @@ public class MiaoshaController implements InitializingBean {
 	MQSender mQSender;
 
 	//标记
-	HashMap<Long, Boolean> localMap = new HashMap<>();
+//	HashMap<Long, Boolean> localMap = new HashMap<>();
 
 	/**
 	 * 系统初始化的时候做的事情。
@@ -60,7 +60,6 @@ public class MiaoshaController implements InitializingBean {
 			return;
 		}
 		for (GoodsVo goods : goodslist) {
-			//如果不是null的时候，将库存加载到redis里面去 prefix---GoodsKey:gs ,	 key---商品id,	 value
 			redisService.set(GoodsKey.getMiaoshaGoodsStock, "" + goods.getId(), goods.getStockCount());
 		}
 	}
@@ -156,8 +155,8 @@ public class MiaoshaController implements InitializingBean {
 	 */
 	@RequestMapping(value = "/{path}/do_miaosha_ajaxcache", method = RequestMethod.POST)
 	@ResponseBody
-	public Result<Integer> doMiaoshaCache(Model model, MiaoshaUser user,
-										  @RequestParam(value = "goodsId", defaultValue = "0") long goodsId, @PathVariable("path") String path) {
+	public Result<Integer> doMiaosha(Model model, MiaoshaUser user,
+									 @RequestParam(value = "goodsId", defaultValue = "0") long goodsId, @PathVariable("path") String path) {
 		model.addAttribute("user", user);
 		//1.如果用户为空，则返回至登录页面
 		if (user == null) {
@@ -169,19 +168,18 @@ public class MiaoshaController implements InitializingBean {
 			return Result.error(CodeMsg.REQUEST_ILLEAGAL);
 		}
 //		内存标记，减少对redis的访问
-		boolean over = localMap.get(goodsId);
-		//在容量满的时候，那么就打标记为true
-		if (over) {
-			return Result.error(CodeMsg.MIAOSHA_OVER_ERROR);
-		}
+//		boolean over = localMap.get(goodsId);
+//		//在容量满的时候，那么就打标记为true
+//		if (over) {
+//			return Result.error(CodeMsg.MIAOSHA_OVER_ERROR);
+//		}
 
-//		 预减少库存，减少redis里面的库存
 		long stock = redisService.decr(GoodsKey.getMiaoshaGoodsStock, "" + goodsId);
 		if (stock < 0) {
-			localMap.put(goodsId, true);
+//			localMap.put(goodsId, true);
 			return Result.error(CodeMsg.MIAOSHA_OVER_ERROR);
 		}
-		MiaoshaOrder order = orderService.getMiaoshaOrderByUserIdAndCoodsId(user.getId(), goodsId);
+		MiaoshaOrder order = orderService.getMiaoshaOrderByUidAndGid(user.getId(), goodsId);
 		if (order != null) {
 			model.addAttribute("errorMessage", CodeMsg.REPEATE_MIAOSHA);
 			return Result.error(CodeMsg.REPEATE_MIAOSHA);

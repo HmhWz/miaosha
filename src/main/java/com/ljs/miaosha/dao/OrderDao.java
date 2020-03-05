@@ -12,7 +12,7 @@ import com.ljs.miaosha.domain.OrderInfo;
 @Mapper
 public interface OrderDao {
 	@Select("select * from miaosha_order where user_id=#{userId} and goods_id=#{goodsId}")
-	public MiaoshaOrder getMiaoshaOrderByUserIdAndCoodsId(@Param("userId") Long userId, @Param("goodsId") Long goodsId);
+	public MiaoshaOrder getMiaoshaOrderByUidAndGid(@Param("userId") Long userId, @Param("goodsId") Long goodsId);
 
 	@Insert("insert into order_info (user_id,goods_id,goods_name,goods_count,goods_price,order_channel,order_status,create_date) values "
 			+ "(#{userId},#{goodsId},#{goodsName},#{goodsCount},#{goodsPrice},#{orderChannel},#{orderStatus},#{createDate})")

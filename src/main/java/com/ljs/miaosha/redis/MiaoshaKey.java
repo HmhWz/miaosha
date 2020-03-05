@@ -7,8 +7,8 @@ public class MiaoshaKey extends BasePrefix {
 	}
 
 	public static MiaoshaKey isGoodsOver = new MiaoshaKey(0, "go");
-	//有效期60s
+
 	public static MiaoshaKey getMiaoshaPath = new MiaoshaKey(60, "mp");
-	//验证码   300s有效期
+
 	public static MiaoshaKey getMiaoshaVertifyCode = new MiaoshaKey(300, "vc");
 }

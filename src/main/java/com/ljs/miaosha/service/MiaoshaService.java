@@ -30,22 +30,16 @@ public class MiaoshaService {
 	RedisService redisService;
 
 	/**
-	 * 秒杀，原子操作：1.库存减1，2.下订单，3.写入秒杀订单--->是一个事务
+	 * 秒杀，原子操作：1.库存减1，2.下订单 是一个事务
 	 * 返回生成的订单
-	 *
-	 * @param user
-	 * @param goodsvo
-	 * @return
 	 */
 	@Transactional
 	public OrderInfo miaosha1(MiaoshaUser user, GoodsVo goodsvo) {
-		//1.减少库存,即更新库存
-		boolean success = goodsService.reduceStock1(goodsvo);//考虑减少库存失败的时候，不进行写入订单
+		boolean success = goodsService.reduceStock1(goodsvo);
 		if (success) {
-			//2.下订单,其中有两个订单: order_info   miaosha_order
-			OrderInfo orderinfo = orderService.createOrder_Cache(user, goodsvo);
+			OrderInfo orderinfo = orderService.createOrder(user, goodsvo);
 			return orderinfo;
-		} else {//减少库存失败
+		} else {
 			//做一个标记，代表商品已经秒杀完了。
 			setGoodsOver(goodsvo.getId());
 			return null;
@@ -57,13 +51,9 @@ public class MiaoshaService {
 	 * 成功返回id
 	 * 0代表排队中
 	 * -1代表库存不足
-	 *
-	 * @param userId
-	 * @param goodsId
-	 * @return
 	 */
 	public long getMiaoshaResult(Long userId, long goodsId) {
-		MiaoshaOrder order = orderService.getMiaoshaOrderByUserIdAndCoodsId_Cache(userId, goodsId);
+		MiaoshaOrder order = orderService.getMiaoshaOrderByUidAndGid_Cache(userId, goodsId);
 		//秒杀成功
 		if (order != null) {
 			return order.getOrderId();
@@ -86,9 +76,6 @@ public class MiaoshaService {
 		redisService.set(MiaoshaKey.isGoodsOver, "" + goodsId, true);
 	}
 
-	/**
-	 * 5-22
-	 */
 	private boolean getGoodsOver(Long goodsId) {
 		return redisService.exitsKey(MiaoshaKey.isGoodsOver, "" + goodsId);
 	}
