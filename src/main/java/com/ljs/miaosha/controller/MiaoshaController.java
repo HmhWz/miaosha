@@ -27,6 +27,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -46,8 +47,7 @@ public class MiaoshaController implements InitializingBean {
 	@Autowired
 	MQSender mQSender;
 
-	//标记
-//	HashMap<Long, Boolean> localMap = new HashMap<>();
+	HashSet<Long> localSet = new HashSet<>();
 
 	/**
 	 * 系统初始化的时候做的事情。
@@ -138,56 +138,49 @@ public class MiaoshaController implements InitializingBean {
 	 */
 	@RequestMapping(value = "/result", method = RequestMethod.GET)
 	@ResponseBody
-	public Result<Long> doMiaoshaResult(Model model, MiaoshaUser user, @RequestParam(value = "goodsId", defaultValue = "0") long goodsId) {
+	public Result<Long> doMiaoshaResult(MiaoshaUser user, @RequestParam(value = "goodsId", defaultValue = "0") long goodsId) {
 		long result = miaoshaService.getMiaoshaResult(user.getId(), goodsId);
 		return Result.success(result);
 	}
 
 	/**
 	 * 563.1899076368552
-	 * 1.系统初始化，把商品库存数量加载到Redis上面来。
 	 * 2.收到请求，Redis预减库存。
 	 * 3.请求入队，立即返回排队中。
 	 * 4.请求出队，生成订单，减少库存（事务）。
 	 * 5.客户端轮询，是否秒杀成功。
+	 *
+	 * @author hmh
 	 */
-	@RequestMapping(value = "/{path}/do_miaosha_ajaxcache", method = RequestMethod.POST)
+	@RequestMapping(value = "/{path}/do_miaosha", method = RequestMethod.POST)
 	@ResponseBody
-	public Result<Integer> doMiaosha(Model model, MiaoshaUser user,
-									 @RequestParam(value = "goodsId", defaultValue = "0") long goodsId, @PathVariable("path") String path) {
-		model.addAttribute("user", user);
-		//1.如果用户为空，则返回至登录页面
+	public Result<Integer> doMiaosha(MiaoshaUser user, @RequestParam(value = "goodsId") long goodsId,
+									 @PathVariable("path") String path) {
 		if (user == null) {
 			return Result.error(CodeMsg.SESSION_ERROR);
 		}
-		//验证path,去redis里面取出来然后验证。
 		boolean check = miaoshaService.checkPath(user, goodsId, path);
 		if (!check) {
 			return Result.error(CodeMsg.REQUEST_ILLEAGAL);
 		}
 //		内存标记，减少对redis的访问
-//		boolean over = localMap.get(goodsId);
-//		//在容量满的时候，那么就打标记为true
-//		if (over) {
-//			return Result.error(CodeMsg.MIAOSHA_OVER_ERROR);
-//		}
-
+		if (localSet.contains(goodsId)) {
+			return Result.error(CodeMsg.MIAOSHA_OVER_ERROR);
+		}
 		long stock = redisService.decr(GoodsKey.getMiaoshaGoodsStock, "" + goodsId);
 		if (stock < 0) {
-//			localMap.put(goodsId, true);
+			//代表没有库存了，添加商品的goodsId
+			localSet.add(goodsId);
 			return Result.error(CodeMsg.MIAOSHA_OVER_ERROR);
 		}
 		MiaoshaOrder order = orderService.getMiaoshaOrderByUidAndGid(user.getId(), goodsId);
 		if (order != null) {
-			model.addAttribute("errorMessage", CodeMsg.REPEATE_MIAOSHA);
 			return Result.error(CodeMsg.REPEATE_MIAOSHA);
 		}
-		//发送一个秒杀message到队列里面去，入队之后客户端应该进行轮询。
 		MiaoshaMessage mms = new MiaoshaMessage();
 		mms.setUser(user);
 		mms.setGoodsId(goodsId);
 		mQSender.sendMiaoshaMessage(mms);
-		//返回0代表排队中
 		return Result.success(0);
 	}
 

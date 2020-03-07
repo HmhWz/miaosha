@@ -32,7 +32,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		//注册
-		//registry.addInterceptor(accessInterceptor);
+//		registry.addInterceptor(accessInterceptor);
 		super.addInterceptors(registry);
 	}
 

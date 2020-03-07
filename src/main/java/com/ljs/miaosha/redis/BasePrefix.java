@@ -13,7 +13,7 @@ public abstract class BasePrefix implements KeyPrefix {
 		this.prefix = prefix;
 	}
 
-	public BasePrefix(int expireSeconds, String prefix) {//覆盖了默认的构造函数
+	public BasePrefix(int expireSeconds, String prefix) {
 		this.expireSeconds = expireSeconds;
 		this.prefix = prefix;
 	}

@@ -21,11 +21,9 @@ public class OrderService {
 	RedisService redisService;
 
 	/**
-	 * 代码2.0
-	 * 生成订单的时候，将订单同时写入到缓存里面去。
-	 * 判断是否秒杀到某商品，即去miaosha_order里面去查找是否有记录userId和goodsId的一条数据。
+	 * 先从缓存中查找
 	 */
-	public MiaoshaOrder getMiaoshaOrderByUidAndGid_Cache(Long userId, Long goodsId) {
+	public MiaoshaOrder getMiaoshaOrderByUidAndGidByCache(Long userId, Long goodsId) {
 		MiaoshaOrder morder = redisService.get(OrderKey.getMiaoshaOrderByUidAndGid, "" + userId + "_" + goodsId, MiaoshaOrder.class);
 		if (morder != null) {
 			return morder;
@@ -38,9 +36,8 @@ public class OrderService {
 	 */
 	@Transactional
 	public OrderInfo createOrder(MiaoshaUser user, GoodsVo goodsvo) {
-		//1.生成order_info
 		OrderInfo orderInfo = new OrderInfo();
-		orderInfo.setDeliveryAddrId(0L);//long类型 private Long deliveryAddrId;   L
+		orderInfo.setDeliveryAddrId(0L);
 		orderInfo.setCreateDate(new Date());
 		orderInfo.setGoodsCount(1);
 		orderInfo.setGoodsId(goodsvo.getId());
@@ -52,7 +49,6 @@ public class OrderService {
 		orderDao.insert(orderInfo);
 		OrderInfo oi = orderDao.selectorderInfo(user.getId(), goodsvo.getId());
 
-		//2.生成miaosha_order
 		MiaoshaOrder miaoshaorder = new MiaoshaOrder();
 		miaoshaorder.setGoodsId(goodsvo.getId());
 		miaoshaorder.setOrderId(oi.getId());

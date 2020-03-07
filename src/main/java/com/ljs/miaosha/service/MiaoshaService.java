@@ -51,7 +51,7 @@ public class MiaoshaService {
 	 * 成功返回id，0代表排队中，-1代表库存不足
 	 */
 	public long getMiaoshaResult(Long userId, long goodsId) {
-		MiaoshaOrder order = orderService.getMiaoshaOrderByUidAndGid_Cache(userId, goodsId);
+		MiaoshaOrder order = orderService.getMiaoshaOrderByUidAndGidByCache(userId, goodsId);
 		if (order != null) {
 			return order.getOrderId();
 		} else {

@@ -10,29 +10,19 @@ import redis.clients.jedis.JedisPool;
 @Service
 public class RedisService {
 	@Autowired
-	JedisPool jedisPool;    //会出现循环依赖---Circular reference
+	JedisPool jedisPool;
 	//RedisService引用JedisPool--JedisPool在RedisService，只有创建RedisService的实例才可以获取JedisPool的bean
 	//所以需要单独拿出JedisPool的bean
 
 	/**
 	 * 获取单个对象
-	 *
-	 * @param prefix prefix
-	 * @param key    key
-	 * @param data
-	 * @return
 	 */
 	public <T> T get(KeyPrefix prefix, String key, Class<T> data) {
-		System.out.println("@RedisService-REDIES-GET!");
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
-			//生成真正的key  className+":"+prefix;  BasePrefix:id1
 			String realKey = prefix.getPrefix() + key;
-			System.out.println("@RedisService-get-realKey:" + realKey);
 			String sval = jedis.get(realKey);
-			System.out.println("@RedisService-getvalue:" + sval);
-			//将String转换为Bean入后传出
 			T t = stringToBean(sval, data);
 			return t;
 		} finally {
@@ -42,10 +32,6 @@ public class RedisService {
 
 	/**
 	 * 移除对象,删除
-	 *
-	 * @param prefix
-	 * @param key
-	 * @return
 	 */
 	public boolean delete(KeyPrefix prefix, String key) {
 		Jedis jedis = null;
@@ -62,20 +48,12 @@ public class RedisService {
 
 	/**
 	 * 设置单个、多个对象
-	 *
-	 * @param prefix
-	 * @param key
-	 * @param value
-	 * @return
-	 */                        //MiaoshaUserKey.token, token, user
+	 */
 	public <T> boolean set(KeyPrefix prefix, String key, T value) {
-		System.out.println("@RedisService-REDIES-SET!");
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
 			String realKey = prefix.getPrefix() + key;
-			System.out.println("@RedisService-key:" + key);
-			System.out.println("@RedisService-getPrefix:" + prefix.getPrefix());
 			String s = beanToString(value);
 			if (s == null || s.length() <= 0) {
 				return false;
@@ -94,10 +72,6 @@ public class RedisService {
 
 	/**
 	 * 减少值
-	 *
-	 * @param prefix
-	 * @param key
-	 * @return
 	 */
 	public <T> Long decr(KeyPrefix prefix, String key) {
 		Jedis jedis = null;
@@ -112,10 +86,6 @@ public class RedisService {
 
 	/**
 	 * 增加值
-	 *
-	 * @param prefix
-	 * @param key
-	 * @return
 	 */
 	public <T> Long incr(KeyPrefix prefix, String key) {
 		Jedis jedis = null;
@@ -130,10 +100,6 @@ public class RedisService {
 
 	/**
 	 * 检查key是否存在
-	 *
-	 * @param prefix
-	 * @param key
-	 * @return
 	 */
 	public <T> boolean exitsKey(KeyPrefix prefix, String key) {
 		Jedis jedis = null;
@@ -172,10 +138,6 @@ public class RedisService {
 
 	/**
 	 * 将Bean对象转换为字符串类型
-	 *
-	 * @param value
-	 * @param <T>
-	 * @return
 	 */
 	public static <T> String beanToString(T value) {
 		if (value == null) {

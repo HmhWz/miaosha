@@ -39,7 +39,7 @@ public class MQReceiver {
 		if (stockcount <= 0) {
 			return;
 		}
-		// 判断这个秒杀订单形成没有，判断是否已经秒杀到了，避免一个账户秒杀多个商品
+		// 判断是否重复秒杀
 		MiaoshaOrder order = orderService.getMiaoshaOrderByUidAndGid(user.getId(), goodsId);
 		if (order != null) {
 			return;

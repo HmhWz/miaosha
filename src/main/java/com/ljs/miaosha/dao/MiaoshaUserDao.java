@@ -9,11 +9,10 @@ import com.ljs.miaosha.domain.MiaoshaUser;
 
 @Mapper
 public interface MiaoshaUserDao {
-	@Select("select * from miaosha_user where id=#{id}")  //这里#{id}通过后面参数来为其赋值
+	@Select("select * from miaosha_user where id=#{id}")
 	public MiaoshaUser getById(@Param("id") long id);
 
-	//绑定在对象上面了----@Param("id")long id,@Param("pwd")long pwd 效果一致
 	@Update("update miaosha_user set pwd=#{pwd} where id=#{id}")
-	public void update(MiaoshaUser toupdateuser);
+	public void update(MiaoshaUser user);
 
 }

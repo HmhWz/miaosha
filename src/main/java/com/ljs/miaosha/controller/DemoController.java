@@ -39,12 +39,6 @@ public class DemoController {
 		return Result.error(CodeMsg.SERVER_ERROR);
 	}
 
-	@RequestMapping("/thymeleaf")
-	public String helloThymeleaf(Model model) {
-		model.addAttribute("name", "hhhm");
-		return "hello";
-	}
-
 	@RequestMapping("/db/get/{id}")
 	@ResponseBody
 	public Result<User> dbGet(@PathVariable int id) {

@@ -6,9 +6,9 @@ public class GoodsKey extends BasePrefix {
 		super(expireSeconds, prefix);
 	}
 
-	//goods_list页面          1分钟
-	public static GoodsKey getGoodsList = new GoodsKey(60, "gl");
-	//goods_detail页面       1分钟
+	//goods_list页面
+	public static GoodsKey getGoodsList = new GoodsKey(5, "gl");
+	//goods_detail页面
 	public static GoodsKey getGoodsDetail = new GoodsKey(60, "gd");
 	//秒杀的商品的数量stock，0不失效
 	public static GoodsKey getMiaoshaGoodsStock = new GoodsKey(0, "gs");

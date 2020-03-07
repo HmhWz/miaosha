@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8"/>
     <title>商品详情</title>
-    <!-- <script type="text/javascript" src="@{/js/jequery.min.js}"></script> -->
     <script type="text/javascript" src="/jquery-validation/lib/jquery-1.11.1.js"></script>
     <link type="text/css" rel="stylesheet" href="/bootstrap/css/bootstrap.css"/>
     <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
-    <!-- layer -->
     <script type="text/javascript" src="/layer/layer.js"></script>
 </head>
 <body>
@@ -138,7 +136,7 @@
         console.log('path: ' + path);
         alert("秒杀!");
         $.ajax({
-            url: "/miaosha/" + path + "/do_miaosha_ajaxcache",
+            url: "/miaosha/" + path + "/do_miaosha",
             type: "POST",
             data: {
                 goodsId: $("#goodsId").val()
