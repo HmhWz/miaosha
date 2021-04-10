@@ -127,7 +127,7 @@ public class IndexController {
 				}
 			}
 		} catch (Exception e) {
-			log.error("Exception: " + e);
+			log.error("Exception: " + e.getMessage());
 		}
 		return res == 1 ? success : error;
 	}
@@ -145,7 +145,7 @@ public class IndexController {
 				orderService.createOrderWithLimitAndRedisAndKafka(sid);
 			}
 		} catch (Exception e) {
-			log.error("Exception: " + e);
+			log.error("Exception: " + e.getMessage());
 		}
 		return "秒杀请求正在处理，排队中";
 	}

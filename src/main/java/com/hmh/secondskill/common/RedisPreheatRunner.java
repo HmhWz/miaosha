@@ -23,7 +23,7 @@ public class RedisPreheatRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // 从数据库中查询热卖商品
-        Stock stock = stockService.getStockById(1);
+        Stock stock = stockService.getStockById(2);
 
         // 删除旧缓存
         RedisPoolUtil.del(RedisKeysConstant.STOCK_COUNT + stock.getCount());
