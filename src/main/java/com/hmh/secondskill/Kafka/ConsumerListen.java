@@ -34,6 +34,11 @@ public class ConsumerListen {
 		// 反序列化
 		Stock stock = gson.fromJson(message, Stock.class);
 		// 创建订单
-		orderService.consumerTopicToCreateOrderWithKafka(stock);
+		try {
+			orderService.consumerTopicToCreateOrderWithKafka(stock);
+		} catch (Exception e) {
+			log.error("kafka消费消息异常：{}", e.getMessage());
+		}
+
 	}
 }
