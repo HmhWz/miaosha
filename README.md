@@ -15,44 +15,6 @@
   - 利用缓存：创建订单时，每次都需要先查询判断库存，只有少部分成功的请求才会创建订单，因此可以将商品信息放在缓存中，减少数据库查询
   - 负载均衡：利用 Nginx 等使用多个服务器并发处理请求，减少单个服务器压力
 
-### Jmeter 压测
-
-![](<https://github.com/gongfukangEE/gongfukangEE.github.io/raw/master/_pic/%E5%88%86%E5%B8%83%E5%BC%8F/Jmeter%20%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95%20TPS.png>)
-
-**测试流程如下：**
-
-首先下载 JMeter 安装包  可以去官网下载：http://jmeter.apache.org
-
-windows 环境下载 zip 安装包，然后将下载的文件进行解压，进入 bin 目录运行 jmeter.bat 即可。
-
-接下来是 Jmeter 测试计划设置:
-
-（1）在测试计划上右键新建一个线程组
-
-![](<https://github.com/daydreamdev/MeetingFilm/raw/master/pic/seconds-kill/1.png>)
-
-线程组属性内可以修改线程数、Ramp-Up 时间和循环次数。
-
-![](<https://github.com/daydreamdev/MeetingFilm/raw/master/pic/seconds-kill/2.png>)
-
-（2）在线程组上右键添加 HTTP 请求
-
-![](<https://github.com/daydreamdev/MeetingFilm/raw/master/pic/seconds-kill/3.png>)
-
-其属性包括 WEB 服务器的协议、服务器名称或 IP 和端口号，HTTP 请求的方法和路径。
-
-![](<https://github.com/daydreamdev/MeetingFilm/raw/master/pic/seconds-kill/4.png>)
-
-（3）在HTTP请求上右键添加一个监听器，可以根据自己的需求添加汇总报告、查看结果树等等。
-
-![](<https://github.com/daydreamdev/MeetingFilm/raw/master/pic/seconds-kill/5.png>)
-
-如下图所示为汇总报告，可以查看异常比例和吞吐量，方便调优。
-
-![](<https://github.com/daydreamdev/MeetingFilm/raw/master/pic/seconds-kill/6.png>)
-
-这样一个简单的 Jmeter 测试计划就算添加完了。一个 HTTP 请求对应一个接口，可以添加多个 HTTP 请求 以达到多个接口同时检测的需求。
-
 ### 0. 基本秒杀逻辑
 
 ```java
